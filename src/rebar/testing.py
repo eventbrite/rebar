@@ -30,7 +30,7 @@ def flatten_to_dict(item):
 
         # recurse into FormSets
         if isinstance(form, BaseFormSet):
-            data.update(flatten_dict(form))
+            data.update(flatten_to_dict(form))
             continue
 
         for field in form.fields:
