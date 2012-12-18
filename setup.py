@@ -17,15 +17,18 @@ setup(name='rebar',
       version=version,
       description="",
       long_description=README + '\n\n' + NEWS,
-      classifiers = [
-        'License :: OSI Approved :: BSD License',
+      classifiers=[
+          'License :: OSI Approved :: BSD License',
       ],
       keywords='',
       url='https://github.com/eventbrite/rebar',
       license='BSD',
       packages=find_packages('src'),
-      package_dir = {'': 'src'},
+      package_dir={'': 'src'},
       include_package_data=True,
       zip_safe=True,
       install_requires=install_requires,
+      tests_require=[
+          'django-discover-runner',
+      ],
 )
