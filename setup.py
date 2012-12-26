@@ -8,10 +8,6 @@ NEWS = open(os.path.join(here, 'NEWS.txt')).read()
 
 version = '0.1'
 
-install_requires = [
-    "Django",
-]
-
 
 setup(name='rebar',
       version=version,
@@ -27,7 +23,6 @@ setup(name='rebar',
       package_dir={'': 'src'},
       include_package_data=True,
       zip_safe=True,
-      install_requires=install_requires,
       tests_require=[
           'django-discover-runner',
       ],
