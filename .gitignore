@@ -7,6 +7,12 @@ develop-eggs
 
 *.egg-info
 
-tmp
-build
-dist
+/tmp/
+/build/
+/dist/
+/bin/
+/include/
+/lib/
+/lib64/
+.Python
+/docs/_build/
