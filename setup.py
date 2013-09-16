@@ -23,6 +23,9 @@ setup(name='rebar',
       package_dir={'': 'src'},
       include_package_data=True,
       zip_safe=True,
+      install_requires=[
+          'Django',
+      ],
       tests_require=[
           'django-discover-runner',
       ],

@@ -1,0 +1,16 @@
+language: python
+python:
+  - "2.6"
+  - "2.7"
+
+env:
+  - DJANGO_SPEC=Django==1.5.4
+  - DJANGO_SPEC=https://www.djangoproject.com/download/1.6b4/tarball/\#egg\=Django
+
+install:
+  - pip install --use-mirrors $DJANGO_SPEC
+  - pip install django-discover-runner
+  - python setup.py install
+
+script:
+  - django-admin.py test --settings=rebar.test_settings rebar
