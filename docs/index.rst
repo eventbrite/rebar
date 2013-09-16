@@ -28,6 +28,7 @@ Once installed, Rebar provides three primary tools:
    form-groups
    state-validators
    testing
+   apidoc/index
    developing
 
 

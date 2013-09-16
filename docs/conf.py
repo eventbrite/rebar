@@ -246,3 +246,9 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+# configure the Django environment so module autodoc works correctly
+import rebar.test_settings
+from django.core.management import setup_environ
+
+setup_environ(rebar.test_settings)
