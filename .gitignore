@@ -16,3 +16,4 @@ develop-eggs
 /lib64/
 .Python
 /docs/_build/
+/.tox/
