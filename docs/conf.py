@@ -254,7 +254,4 @@ texinfo_documents = [
 #texinfo_no_detailmenu = False
 
 # configure the Django environment so module autodoc works correctly
-import rebar.test_settings
-from django.core.management import setup_environ
-
-setup_environ(rebar.test_settings)
+os.environ['DJANGO_SETTINGS_MODULE'] = 'rebar.test_settings'
