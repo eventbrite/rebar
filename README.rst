@@ -2,6 +2,9 @@
  rebar
 =======
 
+.. image:: https://travis-ci.org/eventbrite/rebar.png?branch=master
+   :target: https://travis-ci.org/eventbrite/rebar
+
 **Rebar** makes your Django Forms stronger.
 
 Rebar is a collection of tools that make it easier to work with Django
