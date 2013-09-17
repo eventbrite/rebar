@@ -104,3 +104,6 @@ You can also specify a specific index for the generated form data.
 
    >>> empty_form_data (formset, index=42)
    {u'form-42-first_name': None}
+
+.. _ManagementForm: https://docs.djangoproject.com/en/1.5/topics/forms/formsets/#understanding-the-managementform
+.. _`empty_form`: https://docs.djangoproject.com/en/1.5/topics/forms/formsets/#empty-form
