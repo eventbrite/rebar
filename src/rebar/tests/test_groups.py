@@ -2,7 +2,7 @@
 Tests for FormGroups
 """
 
-from unittest import TestCase
+from django.utils.unittest import TestCase
 
 from django import forms
 from django.core.exceptions import ValidationError
