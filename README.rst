@@ -28,5 +28,5 @@ forms and develop more complex abstractions. Rebar includes:
   FormGroup instances for use in unit tests.
 
 
-**Rebar** is copyright 2012 Eventbrite and Contributors, and is made
-available under BSD-style license; see LICENSE for details.
+**Rebar** is copyright 2012-2013 Eventbrite and Contributors, and is
+made available under BSD-style license; see LICENSE for details.
