@@ -91,8 +91,8 @@ class FormGroupTests(TestCase):
 
         fg = FormGroupClass(data, instance=CallSentinel())
         self.assertFalse(fg.is_valid())
-        self.assert_(fg.forms[0].called.get('is_valid', True))
-        self.assert_(fg.forms[1].called.get('is_valid', True))
+        self.assert_(fg.forms[0].called.get('is_valid', False))
+        self.assert_(fg.forms[1].called.get('is_valid', False))
 
         # formgroup.errors is a dict of error dicts
         # -- TestForm2 is valid
@@ -108,8 +108,8 @@ class FormGroupTests(TestCase):
 
         fg = FormGroupClass(data, instance=CallSentinel())
         self.assert_(fg.is_valid())
-        self.assert_(fg.forms[0].called.get('is_valid', True))
-        self.assert_(fg.forms[1].called.get('is_valid', True))
+        self.assert_(fg.forms[0].called.get('is_valid', False))
+        self.assert_(fg.forms[1].called.get('is_valid', False))
 
 
 # Support objects for testing FormGroups --
