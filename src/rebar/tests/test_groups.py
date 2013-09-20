@@ -4,11 +4,17 @@ Tests for FormGroups
 
 from django.utils.unittest import TestCase
 
-from django import forms
 from django.core.exceptions import ValidationError
 from django.forms.util import ErrorList
 
 from mock import patch
+
+from rebar.tests.helpers import (
+    EmailForm,
+    FakeModel,
+    NameForm,
+)
+
 
 from rebar.groups2 import formgroup_factory, FormGroup
 
@@ -413,69 +419,6 @@ class FormGroupSaveTests(TestCase):
 
     def test_save_calls_save_related_after_parent_saved(self):
         pass
-
-
-#
-# inline formset members for testing
-#
-
-class FakeModel(object):
-
-    def save(self, commit=False):
-        pass
-
-
-class CallSentinel(object):
-
-    def __init__(self, *args, **kwargs):
-        super(CallSentinel, self).__init__(*args, **kwargs)
-
-        self.called = {}
-
-    def save(self, *args, **kwargs):
-        self.called['save'] = True
-
-    def is_valid(self):
-        self.called['is_valid'] = True
-
-        return super(CallSentinel, self).is_valid()
-
-
-class TestForm(CallSentinel, forms.Form):
-
-    def __init__(self, *args, **kwargs):
-
-        self.kwargs = kwargs.copy()
-        self.clean_count = 0
-
-        if 'test_kwarg' in kwargs:
-            kwargs.pop('test_kwarg')
-        if 'instance' in kwargs:
-            self.instance = kwargs.pop('instance')
-
-        super(TestForm, self).__init__(*args, **kwargs)
-
-    def clean(self):
-
-        self.clean_count += 1
-        return self.cleaned_data
-
-    def save(self, commit=True):
-        super(TestForm, self).save()
-
-        if commit:
-            self.instance.save()
-
-
-class NameForm(TestForm):
-
-    first_name = forms.CharField(required=True)
-    last_name = forms.CharField()
-
-
-class EmailForm(TestForm):
-
-    email = forms.EmailField(required=True)
 
 
 ContactFormGroup = formgroup_factory(
