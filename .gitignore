@@ -18,3 +18,4 @@ develop-eggs
 /docs/_build/
 /.tox/
 *.egg
+/htmlcov/
