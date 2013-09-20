@@ -16,7 +16,7 @@ install:
 
 script:
   - coverage run --source=rebar setup.py test
-  - cd docs; make doctest
+  - sphinx-build -E -W -b doctest docs build
 
 after_success:
   - coveralls
