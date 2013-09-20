@@ -2,11 +2,8 @@
  Developing Rebar
 ==================
 
-To run the Rebar unittests, ensure Django and django-discover-runner
-have been installed::
+To run the Rebar unittests, ensure the package is set up for
+development (ie, you've run ``python setup.py develop``), and then
+run::
 
-  $ pip install Django django-discover-runner
-
-Then run the tests using ``django-admin``::
-
-  $ django-admin.py test --settings=rebar.test_settings rebar
+  $ python setup.py test
