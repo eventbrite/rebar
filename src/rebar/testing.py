@@ -67,24 +67,28 @@ def empty_form_data(formset, index=None):
     """Return a form data dictionary for a "new" form in a formset.
 
     Given a formset and an index, return a copy of the empty form
-    data. If index is not provided, the length of the formset will be
-    used as the new index."""
+    data. If index is not provided, the index of the *first* empty
+    form will be used as the new index.
 
-    if index is None:
-        index = len(formset)
+    """
 
-    index = str(index)
+    index = str(index or len(formset))
     result = {}
 
     for field in formset.empty_form.fields:
-        result[formset.empty_form.add_prefix(field).
-               replace('__prefix__', index)] = \
-            formset.empty_form[field].value()
 
-        # check for initial data
+        result[
+            formset.empty_form
+            .add_prefix(field)
+            .replace('__prefix__', index)
+        ] = formset.empty_form[field].value()
+
+        # add initial data, if needed
         if formset.empty_form.fields[field].show_hidden_initial:
-            result[formset.empty_form.add_initial_prefix(field).
-                   replace('__prefix__', index)] = \
-                formset.empty_form[field].value()
+            result[
+                formset.empty_form
+                .add_initial_prefix(field)
+                .replace('__prefix__', index)
+            ] = formset.empty_form[field].value()
 
     return result
