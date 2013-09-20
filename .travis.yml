@@ -9,6 +9,7 @@ env:
   - DJANGO_SPEC=https://www.djangoproject.com/download/1.6b4/tarball/\#egg\=Django
 
 install:
+  - pip install coveralls --use-mirrors
   - pip install --use-mirrors $DJANGO_SPEC
   - pip install Sphinx
   - python setup.py install
@@ -16,3 +17,6 @@ install:
 script:
   - python setup.py test
   - cd docs; make doctest
+
+after_success:
+  - coveralls
