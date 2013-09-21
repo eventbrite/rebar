@@ -51,6 +51,14 @@ class TestForm(CallSentinel, forms.Form):
 
 class NameForm(TestForm):
 
+    class Media:
+        css = {
+            'all': ('name.css',),
+        }
+        js = (
+            'name.js',
+        )
+
     first_name = forms.CharField(
         required=True,
         show_hidden_initial=True,
@@ -60,5 +68,13 @@ class NameForm(TestForm):
 
 
 class EmailForm(TestForm):
+
+    class Media:
+        css = {
+            'all': ('email.css',),
+        }
+        js = (
+            'email.js',
+        )
 
     email = forms.EmailField(required=True)

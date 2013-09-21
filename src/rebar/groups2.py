@@ -150,6 +150,17 @@ class FormGroup(object):
 
         self.instance.save(commit=True)
 
+    @property
+    def media(self):
+
+        return reduce(
+            lambda x, y: x+y,
+            map(
+                lambda f: f.media,
+                self.forms,
+            )
+        )
+
 
 def formgroup_factory(members,
                       formgroup=None,

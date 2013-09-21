@@ -167,6 +167,25 @@ class FormGroupPrefixTests(TestCase):
         )
 
 
+class FormGroupMediaTests(TestCase):
+
+    def test_formgroup_media_includes_member_css(self):
+
+        formgroup = ContactFormGroup()
+        self.assertEqual(
+            formgroup.media._css,
+            {'all': ['name.css', 'email.css'],},
+        )
+
+    def test_formgroup_media_includes_member_js(self):
+
+        formgroup = ContactFormGroup()
+        self.assertEqual(
+            formgroup.media._js,
+            ['name.js', 'email.js'],
+        )
+
+
 class FormGroupInitialTests(TestCase):
 
     def test_pass_initial_data_to_members(self):
