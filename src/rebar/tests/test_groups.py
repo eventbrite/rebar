@@ -6,9 +6,17 @@ from django.utils.unittest import TestCase
 
 from django.core.exceptions import ValidationError
 from django.forms.util import ErrorList
+from django.forms.formsets import (
+    BaseFormSet,
+    formset_factory,
+)
 
-from mock import patch
+from mock import (
+    ANY,
+    patch,
+)
 
+from rebar.testing import flatten_to_dict
 from rebar.tests.helpers import (
     EmailForm,
     FakeModel,
@@ -429,8 +437,9 @@ class FormGroupSaveTests(TestCase):
 
     def test_save_calls_instance_save_once(self):
 
-        with patch.object(FakeModel, 'save') as save_mock:
+        with patch.object(FakeModel, 'save', autospec=True) as save_mock:
 
+            save_mock.side_effect = lambda s, commit: setattr(s, 'id', 42)
             form_data = {
                 'group-name-first_name': 'John',
                 'group-name-last_name': 'Doe',
@@ -443,20 +452,108 @@ class FormGroupSaveTests(TestCase):
 
             form_group.save()
 
-            save_mock.assert_called_once_with(commit=True)
+            save_mock.assert_called_once_with(ANY, commit=True)
 
     def test_inline_formsets_saved_after_parent_saved(self):
-        pass
+
+        form_data = flatten_to_dict(MultiEmailFormGroup())
+        form_data.update(
+            {
+                'group-name-first_name': 'Joe',
+                'group-name-last_name': 'Smith',
+                'group-email-0-email': 'joe@example.com',
+                'group-email-1-email': 'smith@example.com',
+                'group-email-TOTAL_FORMS': '2',
+            }
+        )
+        instance = FakeModel()
+        self.assertEqual(instance.id, None)
+
+        formgroup = MultiEmailFormGroup(
+            data=form_data,
+            instance=instance,
+        )
+
+        self.assertTrue(formgroup.is_valid())
+        self.assertEqual(len(formgroup.email), 2)
+
+        formgroup.save()
+
+        self.assertEqual(instance.id, 42)
 
     def test_save_calls_save_m2m_after_parent_saved(self):
-        pass
+
+        form_data = flatten_to_dict(MultiEmailFormGroup())
+        form_data.update(
+            {
+                'group-name-first_name': 'Joe',
+                'group-name-last_name': 'Smith',
+                'group-email-0-email': 'joe@example.com',
+                'group-email-1-email': 'smith@example.com',
+                'group-email-TOTAL_FORMS': '2',
+            }
+        )
+        formgroup = MultiEmailFormGroup(
+            data=form_data,
+            instance=FakeModel(),
+        )
+
+        self.assertTrue(formgroup.is_valid())
+
+        formgroup.save()
+
+        self.assertTrue(formgroup.name.called['save_m2m'])
 
     def test_save_calls_save_related_after_parent_saved(self):
-        pass
+
+        form_data = flatten_to_dict(MultiEmailFormGroup())
+        form_data.update(
+            {
+                'group-name-first_name': 'Joe',
+                'group-name-last_name': 'Smith',
+                'group-email-0-email': 'joe@example.com',
+                'group-email-1-email': 'smith@example.com',
+                'group-email-TOTAL_FORMS': '2',
+            }
+        )
+        formgroup = MultiEmailFormGroup(
+            data=form_data,
+            instance=FakeModel(),
+        )
+
+        self.assertTrue(formgroup.is_valid())
+        self.assertEqual(len(formgroup.email), 2)
+
+        formgroup.save()
+
+        self.assertTrue(formgroup.name.called['save_related'])
 
 
 ContactFormGroup = formgroup_factory(
-    (NameForm,
-     EmailForm,
-     ),
+    (
+        NameForm,
+        EmailForm,
+    ),
+)
+
+class TestingFormSet(BaseFormSet):
+
+    def __init__(self, instance=None, *args, **kwargs):
+        self.instance = instance
+        super(TestingFormSet, self).__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+
+        if self.instance.id is None:
+            raise AssertionError(
+                "Expected instance.id to be previously set."
+            )
+
+
+MultiEmailFormGroup = formgroup_factory(
+    # the order here is intentional for testing save sequencing
+    (
+        (formset_factory(EmailForm, formset=TestingFormSet), 'email'),
+        NameForm,
+    ),
 )

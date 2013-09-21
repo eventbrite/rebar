@@ -3,8 +3,15 @@ from django import forms
 
 class FakeModel(object):
 
+    def __init__(self, **kwargs):
+
+        self.id = None
+        self.__dict__.update(kwargs)
+
     def save(self, commit=False):
-        pass
+
+        if commit:
+            self.id = 42
 
 
 class CallSentinel(object):
@@ -16,6 +23,24 @@ class CallSentinel(object):
 
     def save(self, *args, **kwargs):
         self.called['save'] = True
+
+    def save_m2m(self, *args, **kwargs):
+
+        if self.instance.id is None:
+            raise AssertionError(
+                "Expected instance.id to be previously set."
+            )
+
+        self.called['save_m2m'] = True
+
+    def save_related(self, *args, **kwargs):
+
+        if self.instance.id is None:
+            raise AssertionError(
+                "Expected instance.id to be previously set."
+            )
+
+        self.called['save_related'] = True
 
     def is_valid(self):
         self.called['is_valid'] = True

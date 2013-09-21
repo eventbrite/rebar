@@ -1,4 +1,6 @@
 from django.core.exceptions import ValidationError
+from django.forms.forms import BaseForm
+from django.forms.formsets import BaseFormSet
 from django.forms.util import ErrorList
 
 
@@ -145,10 +147,26 @@ class FormGroup(object):
 
     def save(self):
 
+        # first call save with commit=False for all Forms
         for form in self._forms:
-            form.save(commit=False)
+            if isinstance(form, BaseForm):
+                form.save(commit=False)
 
+        # call save on the instance and commit
         self.instance.save(commit=True)
+
+        # call any post-commit hooks that have been stashed on Forms
+        for form in self.forms:
+            if isinstance(form, BaseForm):
+                if hasattr(form, 'save_m2m'):
+                    form.save_m2m()
+                if hasattr(form, 'save_related'):
+                    form.save_related()
+
+        # call save on any formsets
+        for form in self._forms:
+            if isinstance(form, BaseFormSet):
+                form.save(commit=True)
 
     @property
     def media(self):
