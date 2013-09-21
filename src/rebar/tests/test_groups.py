@@ -139,17 +139,32 @@ class FormGroupPrefixTests(TestCase):
         formgroup = ContactFormGroup()
         self.assertEqual(formgroup.name.prefix, 'group-name')
 
+    def test_html_id_adds_prefix(self):
 
-## class FormGroupMediaTests(TestCase):
+        formgroup = ContactFormGroup()
 
-##     def test_formgroup_js_include_members(self):
-##         raise Exception()
+        self.assertEqual(
+            formgroup.html_id('testing'),
+            'id_group-testing',
+        )
 
-##     def test_formgroup_css_includes_members(self):
-##         raise Exception()
+    def test_html_id_uses_auto_id(self):
 
-##     def test_formgroup_can_add_media(self):
-##         raise Exception()
+        formgroup = ContactFormGroup(auto_id='foo_%s')
+
+        self.assertEqual(
+            formgroup.html_id('testing'),
+            'foo_group-testing',
+        )
+
+    def test_html_id_delegation(self):
+
+        formgroup = ContactFormGroup()
+
+        self.assertEqual(
+            formgroup.html_id('testing', form=formgroup.name),
+            'id_group-name-testing',
+        )
 
 
 class FormGroupInitialTests(TestCase):

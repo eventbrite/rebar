@@ -15,6 +15,7 @@ class FormGroup(object):
                  initial=None,
                  instance=Unspecified,
                  prefix=None,
+                 auto_id='id_%s',
                  error_class=None,
                  member_kwargs=None):
 
@@ -23,6 +24,7 @@ class FormGroup(object):
         self.files = files or {}
         self.initial = initial or {}
         self.instance = instance
+        self.auto_id = auto_id
         self.error_class = error_class or ErrorList
         self._errors = None
         self._group_errors = None
@@ -84,6 +86,14 @@ class FormGroup(object):
         """Return the field name with a prefix prepended."""
 
         return '%s-%s' % (self.prefix, field_name)
+
+    def html_id(self, field_name, form=None):
+        """Return the html ID for the given field_name."""
+
+        if form is None:
+            form = self
+
+        return form.auto_id % (form.add_prefix(field_name),)
 
     def _full_clean(self):
 
