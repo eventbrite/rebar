@@ -210,15 +210,36 @@ requires some additional piece of information.
 Form Groups in Views
 ====================
 
+
 Using in Class Based Views
 --------------------------
+
+Form Groups are designed to be usable with Django's `class based
+views`_. The group class can be specified as the `form_class`_ for an
+edit view. If you need to pass additional arguments, you'll need to
+override the `get_form`_ method on the View.
 
 Rendering Form Groups
 ---------------------
 
+Form Groups do not provide shortcuts for rendering in templates. The
+shortest way to emit the members is to simply iterate over the
+members::
+
+  {% for form in formgroup.forms %}
+
+      {{ form.as_p }}
+
+  {% endfor %}
+
+Form Groups do provide media_ definitions that roll-up any media found
+in members.
 
 .. _Forms:
 .. _FormSets:
 .. _`class based views`:
 .. _prefix:
 .. _`clean method`:
+.. _media:
+.. _`form_class`:
+.. _`get_form`:
