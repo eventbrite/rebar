@@ -3,6 +3,10 @@
 from unittest import TestCase
 from django.core.exceptions import ValidationError
 
+from rebar.tests.helpers import (
+    NameForm,
+)
+
 from rebar.validators import (
     StateValidator,
     statevalidator_factory,
@@ -91,3 +95,69 @@ class StateValidatorTests(TestCase):
         errors = validator.errors({})
         self.assertEqual(errors.keys(), ['name'])
         self.assert_(isinstance(errors['name'], list))
+
+    def test_validator_validates_form_cleaned_data(self):
+
+        TestValidator = statevalidator_factory({
+            'last_name': (required,),
+        })
+        validator = TestValidator()
+
+        form = NameForm(
+            data={
+                'first_name': 'Joe',
+                'last_name': 'Smith',
+            },
+        )
+
+        # this is a valid form
+        self.assertTrue(form.is_valid())
+        self.assertTrue(form.is_bound)
+
+        # it also passes the state validator
+        self.assertTrue(validator.is_valid(form))
+
+        # if we monkey with the cleaned_data, it will fail
+        del form.cleaned_data['last_name']
+        self.assertFalse(validator.is_valid(form))
+
+
+    def test_validator_validates_unbound_form_initial_data(self):
+
+        TestValidator = statevalidator_factory({
+            'last_name': (required,),
+        })
+        validator = TestValidator()
+
+        form = NameForm(
+            initial={
+                'first_name': 'Joe',
+            },
+        )
+
+        self.assertFalse(form.is_bound)
+
+        self.assertFalse(validator.is_valid(form))
+        self.assertTrue('last_name' in validator.errors(form))
+
+    def test_validator_errors_uses_field_keys(self):
+
+        TestValidator = statevalidator_factory({
+            'last_name': (required,),
+        })
+        validator = TestValidator()
+
+        form = NameForm(
+            data={
+                'first_name': 'Joe',
+            },
+        )
+
+        self.assertFalse(validator.is_valid(form))
+        self.assertEqual(
+            validator.errors(form),
+            {'last_name': [
+                'This field is required',
+                ],
+            },
+        )
