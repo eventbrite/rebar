@@ -121,6 +121,60 @@ You can also override the default prefix.
 Validation
 ----------
 
+FormGroups use a similar approach to validation as FormSets. Calling
+``is_valid()`` on a FormGroup instance will return ``True`` if all
+members are valid.
+
+The ``errors`` property is a list of ErrorLists, in group member
+order.
+
+Just as FormSets support a `clean method`_ for performing any
+validation at the set level, FormGroups provide a ``clean`` hook for
+performing any validation across the entire group. In order to take
+advantage of this hook, you'll need to subclass ``FormGroup``.
+
+.. testcode::
+
+   from django.core.exceptions import ValidationError
+   from rebar.groups2 import FormGroup
+
+   class BaseInvalidFormGroup(FormGroup):
+
+       def clean(self):
+           raise ValidationError("Group validation error.")
+
+This class is passed to ``formgroup_factory`` and used as the base
+class for the new Form Group.
+
+.. testcode::
+
+   InvalidFormGroup = formgroup_factory(
+       (
+           (ContactForm, 'contact'),
+           (AddressForm, 'address'),
+       ),
+       formgroup=BaseInvalidFormGroup,
+   )
+
+When you instantiate the form group with data, any errors raised by
+the ``clean`` method are available as "group errors":
+
+.. doctest::
+
+   >>> bound_formgroup = InvalidFormGroup(data={})
+   >>> bound_formgroup.is_valid()
+   False
+   >>> bound_formgroup.group_errors()
+   [u'Group validation error.']
+
+There are two things to note about group level validation:
+
+* Unlike ``Form.clean()``, the return value of ``FormGroup.clean()``
+  is unimportant
+* Unlike accessing the ``errors`` property of Forms, FormSets, or
+  FormGroups, ``FormGroup.group_errors()`` *does not* trigger
+  validation.
+
 Passing Extra Arguments
 -----------------------
 
@@ -167,3 +221,4 @@ Rendering Form Groups
 .. _FormSets:
 .. _`class based views`:
 .. _prefix:
+.. _`clean method`:
