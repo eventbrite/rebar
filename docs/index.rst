@@ -22,6 +22,9 @@ Once installed, Rebar provides three primary tools:
 * Testing tools, which provide convenient helpers for writing unit
   tests for forms.
 
+Documentation
+=============
+
 .. toctree::
    :maxdepth: 2
 
