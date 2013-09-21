@@ -70,8 +70,16 @@ class StateValidatorTests(TestCase):
 
         # disable the validator; calls to is_valid will now return True
         validator.disable()
+        self.assertFalse(validator.enabled)
         self.assert_(validator.is_valid({}))
         self.assertFalse(validator.errors({}))
+
+        # re-enable the validator
+        validator.enable()
+        self.assertTrue(validator.enabled)
+        self.assertFalse(validator.is_valid({}))
+        self.assertTrue(validator.errors({}))
+
 
     def test_errors_returns_error_dict(self):
         TestValidator = statevalidator_factory({
