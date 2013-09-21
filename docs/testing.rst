@@ -46,6 +46,11 @@ This is an obviously oversimplified example, but ``flatten_to_dict``
 allows you to focus your test on the fields that actually matter in
 that context.
 
+If a ModelForm is passed to ``flatten_to_dict`` with a foreign key,
+the related object's primary key, if any, will be used as the value
+for that field. This correlates with how Django treats those fields in
+form proessing.
+
 
 Empty Form Data for Formsets
 ============================
