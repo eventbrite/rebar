@@ -216,8 +216,8 @@ Using in Class Based Views
 
 Form Groups are designed to be usable with Django's `class based
 views`_. The group class can be specified as the `form_class`_ for an
-edit view. If you need to pass additional arguments, you'll need to
-override the `get_form`_ method on the View.
+edit view. If you need to pass additional arguments, you can override
+the `get_form_kwargs`_ method to add the ``member_kwargs``.
 
 Rendering Form Groups
 ---------------------
@@ -235,11 +235,11 @@ members::
 Form Groups do provide media_ definitions that roll-up any media found
 in members.
 
-.. _Forms:
-.. _FormSets:
-.. _`class based views`:
-.. _prefix:
-.. _`clean method`:
-.. _media:
-.. _`form_class`:
-.. _`get_form`:
+.. _Forms: https://docs.djangoproject.com/en/1.5/ref/forms/api/
+.. _FormSets: https://docs.djangoproject.com/en/1.5/topics/forms/formsets/
+.. _`class based views`: https://docs.djangoproject.com/en/1.5/topics/class-based-views/
+.. _prefix: https://docs.djangoproject.com/en/1.5/ref/forms/api/#prefixes-for-forms
+.. _`clean method`: https://docs.djangoproject.com/en/1.5/topics/forms/formsets/#custom-formset-validation
+.. _media: https://docs.djangoproject.com/en/1.5/topics/forms/media/
+.. _`form_class`: https://docs.djangoproject.com/en/1.5/ref/class-based-views/mixins-editing/#django.views.generic.edit.FormMixin.form_class
+.. _`get_form_kwargs`: https://docs.djangoproject.com/en/1.5/ref/class-based-views/mixins-editing/#django.views.generic.edit.FormMixin.get_form_kwargs
