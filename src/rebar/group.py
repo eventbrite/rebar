@@ -2,10 +2,14 @@ from django.core.exceptions import ValidationError
 from django.forms.forms import BaseForm
 from django.forms.formsets import BaseFormSet
 from django.forms.models import BaseInlineFormSet
-
 from django.forms.util import ErrorList
 
 from rebar.validators import StateValidatorFormMixin
+
+
+class Unspecified(object):
+    """Unspecified Value."""
+Unspecified = Unspecified()
 
 
 class FormGroup(object):
@@ -14,158 +18,125 @@ class FormGroup(object):
     A FormGroup collects an ordered set of Forms and/or FormSets,
     and provides convenience methods for validating the group as a
     whole.
+
     """
 
-    # form_classes is a list of two-tuples, where each tuple consists of
-    #
-    # (Class, Name)
-    #
-    # Class is a subclass of BaseForm or BaseFormSet, and Name is a
-    # valid Python identifier that can be used for property access
+    def __init__(self,
+                 data=None,
+                 files=None,
+                 auto_id='id_%s',
+                 prefix=None,
+                 initial=None,
+                 label_suffix=':',
+                 instance=Unspecified,
+                 error_class=None,
+                 member_kwargs=None):
 
-    form_classes = []
-
-    def __init__(self, data=None, files=None, auto_id='id_%s', prefix=None,
-                 initial=None, label_suffix=":", instance=None,
-                 error_class=ErrorList, member_kwargs=None):
-
-        self.member_kwargs = member_kwargs or {}
         self.is_bound = data is not None or files is not None
         self.data = data or {}
         self.files = files or {}
-        self.prefix = prefix or self.get_default_prefix()
         self.initial = initial or {}
-        self.auto_id = auto_id
         self.label_suffix = label_suffix
-        self.error_class = error_class
-
-        # An instance is required
-        if instance is None:
-            raise ValueError("You must supply an instance to operate on.")
         self.instance = instance
-
-        # construct the forms and create a dict for easy name-access
-        self.named_forms = []
-        for kls, name in self.form_classes:
-
-            extra_kwargs = self.member_kwargs.get(name) or {}
-
-            if issubclass(kls, BaseForm):
-                self.named_forms.append(
-                    (name,
-                      kls(
-                          data=data,
-                          files=files,
-                          auto_id=self.auto_id,
-                          prefix='%s-%s' % (self.prefix, name),
-                          initial=self.initial,
-                          label_suffix=self.label_suffix,
-                          instance=self.instance,
-                          error_class=self.error_class,
-                          **extra_kwargs
-                          )
-                      ))
-
-            elif issubclass(kls, BaseInlineFormSet):
-                # BaseInlineFormSet does not take an auto_id or error_class
-                self.named_forms.append(
-                    (name,
-                      kls(
-                          data=data,
-                          files=files,
-                          prefix='%s-%s' % (self.prefix, name),
-                          instance=self.instance,
-                          **extra_kwargs
-                          )
-                      ))
-
-            elif issubclass(kls, BaseFormSet):
-                self.named_forms.append(
-                    (name,
-                      kls(
-                          data=data,
-                          files=files,
-                          auto_id=self.auto_id,
-                          prefix='%s-%s' % (self.prefix, name),
-                          instance=self.instance,
-                          error_class=self.error_class,
-                          **extra_kwargs
-                          )
-                      ))
-
-        self.forms = [form for name, form in self.named_forms]
-        self.named_forms = dict(self.named_forms)
-
+        self.auto_id = auto_id
+        self.error_class = error_class or ErrorList
         self._errors = None
         self._group_errors = None
 
-    def __getattr__(self, name):
+        self.prefix = prefix or self.get_default_prefix()
 
-        return self.named_forms[name]
+        self.member_kwargs = member_kwargs or {}
+
+        # instantiate the members
+        self._forms = []
+        self._forms_by_name = {}
+
+        for member_class in self.form_classes:
+            if isinstance(member_class, tuple):
+                member_class, name = member_class
+            else:
+                name = member_class.__name__.lower()
+                if name.endswith('form'):
+                    name = name[:-4]
+
+            kwargs = dict(
+                prefix=self.add_prefix(name),
+                data=data,
+                files=files,
+                initial=self.initial,
+            )
+
+            if issubclass(member_class, BaseForm):
+                kwargs.update(dict(
+                    auto_id=self.auto_id,
+                    error_class=self.error_class,
+                    label_suffix=self.label_suffix,
+                ))
+
+            elif issubclass(member_class, BaseInlineFormSet):
+                # inline formsets do not take additional kwargs
+                pass
+
+            elif issubclass(member_class, BaseFormSet):
+                kwargs.update(dict(
+                    auto_id=self.auto_id,
+                    error_class=self.error_class,
+                ))
+            extra_kwargs = self.member_kwargs.get(name, {})
+            if self.instance is not Unspecified:
+                extra_kwargs['instance'] = self.instance
+            kwargs.update(extra_kwargs)
+
+            new_form = member_class(
+                **kwargs
+            )
+            self._forms_by_name[name] = new_form
+            self._forms.append(new_form)
+
+    @property
+    def forms(self):
+        return self._forms
 
     def __len__(self):
 
         return len(self.forms)
 
-    def _apply(self, method_name, *args, **kwargs):
-        """Apply a method to all member forms."""
+    def __getitem__(self, index):
 
-        return [method(*args, **kwargs)
-                for method in self._collect(method_name)]
+        return self.forms[index]
 
-    def _collect(self, property):
-        """Return a list of the property values for each form instance."""
+    def __getattr__(self, name):
 
-        return [getattr(form, property)
-                for form in self.forms]
+        return self._forms_by_name[name]
 
-    @classmethod
-    def get_default_prefix(cls):
-        return "group"
+    def get_default_prefix(self):
 
-    def group_errors(self):
-        """
-        Returns an ErrorList of errors that aren't associated with a
-        particular form -- i.e., from formset.clean(). Returns an
-        empty ErrorList if there are none.
-        """
-        if self._group_errors is not None:
-            return self._group_errors
-        return self.error_class()
+        return 'group'
 
-    def _get_errors(self):
-        """
-        Returns a list of form.errors for every form in self.forms.
-        """
-        if self._errors is None:
-            self.full_clean()
-        return self._errors
-    errors = property(_get_errors)
+    def add_prefix(self, field_name):
+        """Return the field name with a prefix prepended."""
 
-    def is_valid(self):
-        """
-        Returns True if form.errors is empty for every form in self.forms.
-        """
-        if not self.is_bound:
-            return False
+        return '%s-%s' % (self.prefix, field_name)
 
-        # perform cleaning on each member, then Group level
-        self.full_clean()
+    def html_id(self, field_name, form=None):
+        """Return the html ID for the given field_name."""
 
-        return (not(self.group_errors()) and
-                all(self._apply('is_valid')))
+        if form is None:
+            form = self
 
-    def full_clean(self):
-        """
-        Cleans all of self.data and populates self._errors.
-        """
+        return form.auto_id % (form.add_prefix(field_name),)
+
+    def _full_clean(self):
+
         self._errors = []
-        if not self.is_bound:  # Stop further processing.
+        if not self.is_bound:
             return
-        for form in self.forms:
-            self._errors.append(form.errors)
 
-        # Give self.clean() a chance to do full-group validation.
+        self._errors = map(
+            lambda f: f.errors,
+            self.forms,
+        )
+
         try:
             self.clean()
         except ValidationError, e:
@@ -173,25 +144,64 @@ class FormGroup(object):
 
     def clean(self):
         """
-        Hook for doing formgroup-wide cleaning/validation after
+        Hook for doing formgroup-wide cleaning/validation.
+
+        Subclasses can override this to perform validation after
         .clean() has been called on every member.
 
         Any ValidationError raised by this method will be accessible
         via formgroup.group_errors().()
+
         """
-        pass
+
+    def is_valid(self):
+
+        if not self.is_bound:
+            return False
+
+        self._full_clean()
+
+        return all(
+            map(
+                lambda f: f.is_valid(),
+                self.forms,
+            )
+        )
+
+    @property
+    def errors(self):
+
+        if self._errors is None:
+            self._full_clean()
+
+        return self._errors
+
+    def group_errors(self):
+        """
+        Return the group level validation errors.
+
+        Returns an ErrorList of errors that aren't associated with a
+        particular form. Returns an empty ErrorList if there are none.
+
+        """
+
+        if self._group_errors is not None:
+            return self._group_errors
+
+        return self.error_class()
 
     def save(self):
-        """Save the changes to the instance and any related
-        objects."""
+        """Save the changes to the instance and any related objects."""
 
-        # first call save for the Form instances
-        for form in self.forms:
+        # first call save with commit=False for all Forms
+        for form in self._forms:
             if isinstance(form, BaseForm):
                 form.save(commit=False)
 
-        # then commit the instance
-        self.instance.save()
+        # call save on the instance and commit
+        self.instance.save(commit=True)
+
+        # call any post-commit hooks that have been stashed on Forms
         for form in self.forms:
             if isinstance(form, BaseForm):
                 if hasattr(form, 'save_m2m'):
@@ -199,39 +209,21 @@ class FormGroup(object):
                 if hasattr(form, 'save_related'):
                     form.save_related()
 
-        # then call save for any formsets
-        for form in self.forms:
+        # call save on any formsets
+        for form in self._forms:
             if isinstance(form, BaseFormSet):
                 form.save(commit=True)
 
-        # return the instance
-        return self.instance
-
     @property
     def media(self):
-        """Return the media definitions for all Forms and FormSets."""
 
-        return self._collect('media')
-
-    def add_prefix(self, field_name):
-        """
-        Returns the field name with a prefix appended, if this Form has a
-        prefix set.
-
-        Subclasses may wish to override.
-        """
-
-        if self.prefix:
-            return '%s-%s' % (self.prefix, field_name)
-
-        return field_name
-
-    def html_id(self, field_name, form=None):
-
-        if form is None:
-            form = self
-
-        return form.auto_id % form.add_prefix(field_name)
+        return reduce(
+            lambda x, y: x+y,
+            map(
+                lambda f: f.media,
+                self.forms,
+            )
+        )
 
 
 class StateValidatorFormGroup(StateValidatorFormMixin, FormGroup):
@@ -263,24 +255,26 @@ class StateValidatorFormGroup(StateValidatorFormMixin, FormGroup):
                    for state in states)
 
 
-def formgroup_factory(form_classes,
-                      state_validators=None,
+def formgroup_factory(members,
                       formgroup=None,
+                      state_validators=None,
                       ):
-    """Return a FormGroup Class for the given form[set] classes.
+    """Return a FormGroup class for the given form[set] members.
 
-    If the optional state_validators dict is provided, this
-    constructed class will subclass StateValidatorFormGroup."""
+    """
 
-    # determine the base class to use
-    if formgroup is None:
-        if state_validators is None:
-            formgroup = FormGroup
-        else:
-            formgroup = StateValidatorFormGroup
+    base_class = formgroup or FormGroup
+    if state_validators is not None:
+        base_class = StateValidatorFormGroup
 
-    attrs = {
-        'form_classes': form_classes,
-        'state_validators': state_validators,
-        }
-    return type('FormGroup', (formgroup,), attrs)
+    if not issubclass(base_class, FormGroup):
+        raise TypeError("Base formgroup class must subclass FormGroup.")
+
+    return type(
+        'FormGroup',
+        (base_class,),
+        dict(
+            form_classes=members,
+            state_validators=state_validators,
+        ),
+    )

@@ -23,7 +23,7 @@ from rebar.tests.helpers import (
     NameForm,
 )
 
-from rebar.groups2 import (
+from rebar.group import (
     formgroup_factory,
     FormGroup,
     StateValidatorFormGroup,

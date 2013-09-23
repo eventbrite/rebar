@@ -50,7 +50,7 @@ A Form Group allows you to combine the two and treat them as one.
 
 .. testcode::
 
-   from rebar.groups2 import formgroup_factory
+   from rebar.group import formgroup_factory
 
    ContactFormGroup = formgroup_factory(
        (
@@ -65,7 +65,7 @@ form.
 .. doctest::
 
    >>> ContactFormGroup()  # doctest: +ELLIPSIS
-   <rebar.groups2.FormGroup object at ...>
+   <rebar.group.FormGroup object at ...>
 
 
 Using Form Groups
@@ -136,7 +136,7 @@ advantage of this hook, you'll need to subclass ``FormGroup``.
 .. testcode::
 
    from django.core.exceptions import ValidationError
-   from rebar.groups2 import FormGroup
+   from rebar.group import FormGroup
 
    class BaseInvalidFormGroup(FormGroup):
 
