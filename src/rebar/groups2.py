@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.forms.forms import BaseForm
 from django.forms.formsets import BaseFormSet
+from django.forms.models import BaseInlineFormSet
 from django.forms.util import ErrorList
 
 from rebar.validators import StateValidatorFormMixin
@@ -16,10 +17,11 @@ class FormGroup(object):
     def __init__(self,
                  data=None,
                  files=None,
-                 initial=None,
-                 instance=Unspecified,
-                 prefix=None,
                  auto_id='id_%s',
+                 prefix=None,
+                 initial=None,
+                 label_suffix=':',
+                 instance=Unspecified,
                  error_class=None,
                  member_kwargs=None):
 
@@ -27,6 +29,7 @@ class FormGroup(object):
         self.data = data or {}
         self.files = files or {}
         self.initial = initial or {}
+        self.label_suffix = label_suffix
         self.instance = instance
         self.auto_id = auto_id
         self.error_class = error_class or ErrorList
@@ -55,6 +58,23 @@ class FormGroup(object):
                 files=files,
                 initial=self.initial,
             )
+
+            if issubclass(member_class, BaseForm):
+                kwargs.update(dict(
+                    auto_id=self.auto_id,
+                    error_class=self.error_class,
+                    label_suffix=self.label_suffix,
+                ))
+
+            elif issubclass(member_class, BaseInlineFormSet):
+                # inline formsets do not take additional kwargs
+                pass
+
+            elif issubclass(member_class, BaseFormSet):
+                kwargs.update(dict(
+                    auto_id=self.auto_id,
+                    error_class=self.error_class,
+                ))
             extra_kwargs = self.member_kwargs.get(name, {})
             if self.instance is not Unspecified:
                 extra_kwargs['instance'] = self.instance

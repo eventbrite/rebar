@@ -112,6 +112,23 @@ class FormGroupFactoryTests(TestCase):
         self.assertTrue(fg_class.state_validators)
 
 
+class FormGroupInstantiationTests(TestCase):
+
+    def test_label_suffix_default(self):
+
+        form_group = ContactFormGroup()
+
+        self.assertEqual(form_group.label_suffix, ':')
+        self.assertEqual(form_group.name.label_suffix, ':')
+
+    def test_label_suffix_specified(self):
+
+        form_group = ContactFormGroup(label_suffix='testing')
+
+        self.assertEqual(form_group.label_suffix, 'testing')
+        self.assertEqual(form_group.name.label_suffix, 'testing')
+
+
 class FormGroupAccessorTests(TestCase):
 
     def test_formgroup_length_is_number_of_members(self):
