@@ -8,7 +8,7 @@ Rebar provides form-related tools for Django which enable complex form
 interactions.
 
 Installation
-------------
+============
 
 You can install Rebar using pip_ or `easy_install`_::
 
