@@ -13,6 +13,13 @@ Unspecified = Unspecified()
 
 
 class FormGroup(object):
+    """Form-like wrapper for a heterogenous collection of Forms.
+
+    A FormGroup collects an ordered set of Forms and/or FormSets,
+    and provides convenience methods for validating the group as a
+    whole.
+
+    """
 
     def __init__(self,
                  data=None,
@@ -136,7 +143,16 @@ class FormGroup(object):
             self._group_errors = self.error_class(e.messages)
 
     def clean(self):
-        pass
+        """
+        Hook for doing formgroup-wide cleaning/validation.
+
+        Subclasses can override this to perform validation after
+        .clean() has been called on every member.
+
+        Any ValidationError raised by this method will be accessible
+        via formgroup.group_errors().()
+
+        """
 
     def is_valid(self):
 
@@ -161,6 +177,13 @@ class FormGroup(object):
         return self._errors
 
     def group_errors(self):
+        """
+        Return the group level validation errors.
+
+        Returns an ErrorList of errors that aren't associated with a
+        particular form. Returns an empty ErrorList if there are none.
+
+        """
 
         if self._group_errors is not None:
             return self._group_errors
@@ -168,6 +191,7 @@ class FormGroup(object):
         return self.error_class()
 
     def save(self):
+        """Save the changes to the instance and any related objects."""
 
         # first call save with commit=False for all Forms
         for form in self._forms:
