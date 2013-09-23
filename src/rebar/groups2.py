@@ -3,6 +3,8 @@ from django.forms.forms import BaseForm
 from django.forms.formsets import BaseFormSet
 from django.forms.util import ErrorList
 
+from rebar.validators import StateValidatorFormMixin
+
 
 class Unspecified(object):
     """Unspecified Value."""
@@ -180,14 +182,47 @@ class FormGroup(object):
         )
 
 
+class StateValidatorFormGroup(StateValidatorFormMixin, FormGroup):
+    """
+
+    Subclasses are expected to define the state_validators property,
+    which is a mapping of states to StateValidator objects."""
+
+    def get_errors(self, *states):
+
+        return [form.get_errors(*states)
+                   for form in self.forms
+                   if isinstance(form, StateValidatorFormMixin)] + \
+               [self.state_validators[state].errors(self)
+                   for state in states]
+
+    def is_valid(self, *states):
+        """Returns True if no errors are thrown for the specified state."""
+
+        # if no state is specified, fallback to the base FormGroup's is_valid
+        if not states:
+            return super(StateValidatorFormGroup, self).is_valid()
+
+        # see if the states pass for all forms that define state_validators
+        return all(form.is_valid(*states)
+                   for form in self.forms
+                   if isinstance(form, StateValidatorFormMixin)) and \
+               all(self.state_validators[state].is_valid(self)
+                   for state in states)
+
+
 def formgroup_factory(members,
                       formgroup=None,
+                      state_validators=None,
                       ):
     """Return a FormGroup class for the given form[set] members.
 
     """
 
     base_class = formgroup or FormGroup
+    if state_validators is not None:
+        base_class = StateValidatorFormGroup
+
     if not issubclass(base_class, FormGroup):
         raise TypeError("Base formgroup class must subclass FormGroup.")
 
@@ -196,5 +231,6 @@ def formgroup_factory(members,
         (base_class,),
         dict(
             form_classes=members,
+            state_validators=state_validators,
         ),
     )

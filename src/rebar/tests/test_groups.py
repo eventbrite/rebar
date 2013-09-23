@@ -23,8 +23,11 @@ from rebar.tests.helpers import (
     NameForm,
 )
 
-
-from rebar.groups2 import formgroup_factory, FormGroup
+from rebar.groups2 import (
+    formgroup_factory,
+    FormGroup,
+    StateValidatorFormGroup,
+)
 
 
 class FormGroupFactoryTests(TestCase):
@@ -74,9 +77,42 @@ class FormGroupFactoryTests(TestCase):
                 formgroup=object,
             )
 
+    def test_specifying_state_validators_uses_mixin_baseclass(self):
+
+        fg_class = formgroup_factory(
+            (NameForm,
+             EmailForm,
+            ),
+            state_validators={
+                'testing': {
+                    'first_name': (lambda x: x,),
+                },
+            },
+        )
+
+        self.assertTrue(issubclass(fg_class, StateValidatorFormGroup))
+
+    def test_state_validators_added_to_fg_class(self):
+
+        fg_class = formgroup_factory(
+            (NameForm,
+             EmailForm,
+            ),
+            state_validators={
+                'testing': {
+                    'first_name': (lambda x: x,),
+                },
+            },
+        )
+
+        self.assertTrue(
+            hasattr(fg_class, 'state_validators'),
+            'formgroup_factory did not add state_validators property to class.',
+        )
+        self.assertTrue(fg_class.state_validators)
+
 
 class FormGroupAccessorTests(TestCase):
-
 
     def test_formgroup_length_is_number_of_members(self):
 
