@@ -581,6 +581,22 @@ class FormGroupSaveTests(TestCase):
 
         self.assertTrue(formgroup.name.called['save_related'])
 
+    def test_save_returns_instance(self):
+
+        model_instance = FakeModel()
+
+        form_data = {
+            'group-name-first_name': 'John',
+            'group-name-last_name': 'Doe',
+            'group-email-email': 'john.doe@example.com',
+        }
+        form_group = ContactFormGroup(
+            data=form_data,
+            instance=model_instance,
+        )
+
+        self.assertEqual(form_group.save(), model_instance)
+
 
 ContactFormGroup = formgroup_factory(
     (

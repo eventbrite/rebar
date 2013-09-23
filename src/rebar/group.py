@@ -214,6 +214,8 @@ class FormGroup(object):
             if isinstance(form, BaseFormSet):
                 form.save(commit=True)
 
+        return self.instance
+
     @property
     def media(self):
 
