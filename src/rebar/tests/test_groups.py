@@ -264,7 +264,7 @@ class FormGroupMediaTests(TestCase):
 
 class FormGroupInitialTests(TestCase):
 
-    def test_pass_initial_data_to_members(self):
+    def test_pass_initial_data_to_form_members(self):
 
         form_group = ContactFormGroup(
             initial={
@@ -281,6 +281,16 @@ class FormGroupInitialTests(TestCase):
             'Joe',
         )
 
+    def test_initial_not_passed_to_formgroups(self):
+
+        fg_class = formgroup_factory(
+            ((NameForm, 'name'),
+             (formset_factory(EmailForm), 'emails'),
+             ),
+        )
+        form_group = fg_class(initial={'last_name': 'Jones'})
+
+        self.assertFalse(form_group.emails.initial)
 
 
 class FormGroupValidationTests(TestCase):
