@@ -51,6 +51,21 @@ class FormGroupFactoryTests(TestCase):
             issubclass(fg_class, FormGroup)
         )
 
+    def test_form_group_factory_takes_form_classes_kwarg(self):
+
+        # this was existing behavior, retaining for compatibility.
+
+        fg_class = formgroup_factory(
+            form_classes = (
+                NameForm,
+                EmailForm,
+            ),
+        )
+
+        self.assertTrue(
+            issubclass(fg_class, FormGroup)
+        )
+
     def test_formgroup_factory_can_take_baseclass(self):
 
         class MyFormGroup(FormGroup):

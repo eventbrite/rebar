@@ -257,11 +257,11 @@ class StateValidatorFormGroup(StateValidatorFormMixin, FormGroup):
                    for state in states)
 
 
-def formgroup_factory(members,
+def formgroup_factory(form_classes,
                       formgroup=None,
                       state_validators=None,
                       ):
-    """Return a FormGroup class for the given form[set] members.
+    """Return a FormGroup class for the given form[set] form_classes.
 
     """
 
@@ -276,7 +276,7 @@ def formgroup_factory(members,
         'FormGroup',
         (base_class,),
         dict(
-            form_classes=members,
+            form_classes=form_classes,
             state_validators=state_validators,
         ),
     )
