@@ -9,7 +9,6 @@
    :target: https://coveralls.io/r/eventbrite/rebar?branch=master
 
 
-
 **Rebar** makes your Django Forms stronger.
 
 Rebar is a collection of tools that make it easier to work with Django
@@ -31,7 +30,3 @@ forms and develop more complex abstractions. Rebar includes:
 
   Easily generate dictionaries of form data from a Form, FormSet, and
   FormGroup instances for use in unit tests.
-
-
-**Rebar** is copyright 2012-2013 Eventbrite and Contributors, and is
-made available under BSD-style license; see LICENSE for details.

@@ -1,9 +1,17 @@
 News
 ====
 
-0.1
------
+0.2
+---
 
 *Release date: UNRELEASED*
+
+* Rewrite of Form Groups with tests
+* Additional documentation
+
+0.1
+---
+
+*Release date: 2012-03-11*
 
 * Initial export of rebar
