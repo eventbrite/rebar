@@ -186,6 +186,18 @@ class FormGroupAccessorTests(TestCase):
             formgroup.email, formgroup[1]
         )
 
+    def test_formgroup_members_exposed_as_named_forms(self):
+
+        formgroup = ContactFormGroup()
+
+        self.assertEqual(
+            formgroup.named_forms['name'], formgroup[0]
+        )
+        self.assertEqual(
+            formgroup.named_forms['email'], formgroup[1]
+        )
+
+
     def test_formgroup_member_name_configurable(self):
 
         formgroup = formgroup_factory(

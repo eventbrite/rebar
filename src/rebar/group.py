@@ -49,7 +49,7 @@ class FormGroup(object):
 
         # instantiate the members
         self._forms = []
-        self._forms_by_name = {}
+        self.named_forms = {}
 
         for member_class in self.form_classes:
             if isinstance(member_class, tuple):
@@ -90,7 +90,7 @@ class FormGroup(object):
             new_form = member_class(
                 **kwargs
             )
-            self._forms_by_name[name] = new_form
+            self.named_forms[name] = new_form
             self._forms.append(new_form)
 
     @property
@@ -107,7 +107,7 @@ class FormGroup(object):
 
     def __getattr__(self, name):
 
-        return self._forms_by_name[name]
+        return self.named_forms[name]
 
     def get_default_prefix(self):
 
