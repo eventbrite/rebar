@@ -208,6 +208,25 @@ class FormGroupAccessorTests(TestCase):
 
         self.assertIsInstance(formgroup.named_form, NameForm)
 
+    def test_apply_calls_method_on_all_members(self):
+
+        formgroup = ContactFormGroup()
+
+        self.assertEqual(
+            formgroup._apply('apply_test', True, True),
+            [True, True],
+        )
+
+        self.assertEqual(
+            formgroup.name.called['apply_test'],
+            (True, True),
+        )
+
+        self.assertEqual(
+            formgroup.email.called['apply_test'],
+            (True, True),
+        )
+
 
 class FormGroupPrefixTests(TestCase):
 

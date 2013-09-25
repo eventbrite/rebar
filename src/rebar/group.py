@@ -109,6 +109,18 @@ class FormGroup(object):
 
         return self.named_forms[name]
 
+    def _apply(self, method_name, *args, **kwargs):
+        """Call ``method_name`` with args and kwargs on each member.
+
+        Returns a sequence of return values.
+
+        """
+
+        return [
+            getattr(member, method_name)(*args, **kwargs)
+            for member in self.forms
+        ]
+
     def get_default_prefix(self):
 
         return 'group'

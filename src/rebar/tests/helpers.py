@@ -73,6 +73,12 @@ class TestForm(CallSentinel, forms.Form):
         if commit:
             self.instance.save()
 
+    def apply_test(self, *args):
+
+        self.called['apply_test'] = args
+
+        return True
+
 
 class NameForm(TestForm):
 
