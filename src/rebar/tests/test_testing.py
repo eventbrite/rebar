@@ -1,3 +1,4 @@
+from django import VERSION
 from django.utils.unittest import TestCase
 
 from django.forms.formsets import formset_factory
@@ -119,16 +120,22 @@ class FlattenToDictTests(TestCase):
 
     def test_flatten_formset(self):
 
-        self.assertEqual(
-            flatten_to_dict(ContactFormSet()),
-            {
+        expected_result = {
                 'initial-form-0-first_name': 'Larry',
                 'form-0-first_name': 'Larry',
                 'form-0-last_name': '',
                 'form-INITIAL_FORMS': 0,
                 'form-MAX_NUM_FORMS': 1000,
                 'form-TOTAL_FORMS': 1,
-            },
+            }
+
+        if VERSION >= (1, 7):
+            # 1.7 added min-version
+            expected_result['form-MIN_NUM_FORMS'] = 0
+
+        self.assertEqual(
+            flatten_to_dict(ContactFormSet()),
+            expected_result,
         )
 
 
