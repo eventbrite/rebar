@@ -108,7 +108,7 @@ class StateValidator(object):
             for validator in self.validators[field]:
                 try:
                     validator(data.get(field, None))
-                except ValidationError, e:
+                except ValidationError as e:
                     field_errors += e.messages
 
             # if there were errors, cast to ErrorList for output convenience
