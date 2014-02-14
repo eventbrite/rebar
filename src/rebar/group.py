@@ -151,7 +151,7 @@ class FormGroup(object):
 
         try:
             self.clean()
-        except ValidationError, e:
+        except ValidationError as e:
             self._group_errors = self.error_class(e.messages)
 
     def clean(self):
