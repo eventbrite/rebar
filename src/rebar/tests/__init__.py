@@ -2,9 +2,25 @@ import os
 import sys
 
 
-def run_tests():
+def setup():
+    """Perform test runner setup.
+
+    This is its own function so we can easily call it from doctest
+    ``testsetup`` blocks.
+
+    """
 
     os.environ['DJANGO_SETTINGS_MODULE'] = 'rebar.test_settings'
+
+    import django
+    if django.VERSION >= (1, 7):
+        # initialize the app regsitry
+        django.setup()
+
+
+def run_tests():
+
+    setup()
 
     from django.conf import settings
     from django.test.utils import get_runner

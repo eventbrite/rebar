@@ -2,6 +2,11 @@
  Testing with Rebar
 ====================
 
+.. testsetup::
+
+   import rebar.tests
+   rebar.tests.setup()
+
 Rebar includes some helpers for writing unit tests for Django Forms.
 
 Generating Form Data
