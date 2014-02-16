@@ -84,7 +84,6 @@ class StateValidatorTests(TestCase):
         self.assertFalse(validator.is_valid({}))
         self.assertTrue(validator.errors({}))
 
-
     def test_errors_returns_error_dict(self):
         TestValidator = statevalidator_factory({
             'name': (required,),
@@ -93,7 +92,7 @@ class StateValidatorTests(TestCase):
         # instantiate our new class and pass it invalid data
         validator = TestValidator()
         errors = validator.errors({})
-        self.assertEqual(errors.keys(), ['name'])
+        self.assertEqual(list(errors.keys()), ['name'])
         self.assert_(isinstance(errors['name'], list))
 
     def test_validator_validates_form_cleaned_data(self):

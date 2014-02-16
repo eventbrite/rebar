@@ -30,3 +30,5 @@ forms and develop more complex abstractions. Rebar includes:
 
   Easily generate dictionaries of form data from a Form, FormSet, and
   FormGroup instances for use in unit tests.
+
+Rebar supports Django 1.5 and later on Python 2.6, 2.7, and 3.3.

@@ -8,6 +8,7 @@ News
 
 * Rewrite of Form Groups with tests
 * Additional documentation
+* Python 3.3 compatibility.
 
 0.1
 ---

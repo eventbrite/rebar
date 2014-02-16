@@ -107,7 +107,10 @@ class FormGroup(object):
 
     def __getattr__(self, name):
 
-        return self.named_forms[name]
+        try:
+            return self.named_forms[name]
+        except KeyError:
+            raise AttributeError
 
     def _apply(self, method_name, *args, **kwargs):
         """Call ``method_name`` with args and kwargs on each member.
@@ -144,10 +147,10 @@ class FormGroup(object):
         if not self.is_bound:
             return
 
-        self._errors = map(
-            lambda f: f.errors,
-            self.forms,
-        )
+        self._errors = [
+            f.errors
+            for f in self.forms
+        ]
 
         try:
             self.clean()
@@ -173,12 +176,12 @@ class FormGroup(object):
 
         self._full_clean()
 
-        return all(
-            map(
-                lambda f: f.is_valid(),
-                self.forms,
-            )
-        )
+        forms_valid = [
+            f.is_valid()
+            for f in self.forms
+        ]
+
+        return all(forms_valid)
 
     @property
     def errors(self):
@@ -231,13 +234,12 @@ class FormGroup(object):
     @property
     def media(self):
 
-        return reduce(
-            lambda x, y: x+y,
-            map(
-                lambda f: f.media,
-                self.forms,
-            )
-        )
+        group_media = self.forms[0].media
+
+        for form in self.forms[1:]:
+            group_media += form.media
+
+        return group_media
 
 
 class StateValidatorFormGroup(StateValidatorFormMixin, FormGroup):
