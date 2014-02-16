@@ -19,3 +19,5 @@ develop-eggs
 /.tox/
 *.egg
 /htmlcov/
+/.coverage
+/local/
