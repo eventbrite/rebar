@@ -9,6 +9,7 @@ import manuel.testing
 
 from rebar.tests.manuel_ext import (
     testcode,
+    unicode_output,
 )
 
 
@@ -32,6 +33,7 @@ def get_doctest_suite():
     """Return the doctest suite."""
 
     m = manuel.doctest.Manuel(
+        parser=unicode_output.PermissiveUnicodeDocTestParser(),
         optionflags=doctest.ELLIPSIS,
     )
     m += manuel.codeblock.Manuel()
