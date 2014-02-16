@@ -1,5 +1,15 @@
+import doctest
+import glob
 import os
 import sys
+
+import manuel.codeblock
+import manuel.doctest
+import manuel.testing
+
+from rebar.tests.manuel_ext import (
+    testcode,
+)
 
 
 def setup():
@@ -18,6 +28,27 @@ def setup():
         django.setup()
 
 
+def get_doctest_suite():
+    """Return the doctest suite."""
+
+    m = manuel.doctest.Manuel(
+        optionflags=doctest.ELLIPSIS,
+    )
+    m += manuel.codeblock.Manuel()
+    m += testcode.Manuel()
+
+    return manuel.testing.TestSuite(
+        m,
+        *[
+            os.path.join(
+                os.getcwd(),
+                path,
+            )
+            for path in glob.glob('docs/*.rst')
+        ]
+    )
+
+
 def run_tests():
 
     setup()
@@ -27,7 +58,11 @@ def run_tests():
 
     TestRunner = get_runner(settings)
     test_runner = TestRunner()
-    failures = test_runner.run_tests(['rebar'])
+
+    failures = test_runner.run_tests(
+        ['rebar'],
+        extra_tests=get_doctest_suite(),
+    )
 
     sys.exit(failures)
 

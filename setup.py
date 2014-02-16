@@ -28,6 +28,7 @@ setup(name='rebar',
       ],
       tests_require=[
           'django-discover-runner',
+          'manuel',
           'mock',
       ],
       test_suite='rebar.tests.run_tests',
