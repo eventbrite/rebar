@@ -1,6 +1,13 @@
 News
 ====
 
+0.3
+---
+
+*Release date: UNRELEASED*
+
+* No longer pass "commit=True" when saving model instances
+
 0.2
 ---
 
