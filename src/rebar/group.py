@@ -213,8 +213,8 @@ class FormGroup(object):
             if isinstance(form, BaseForm):
                 form.save(commit=False)
 
-        # call save on the instance and commit
-        self.instance.save(commit=True)
+        # call save on the instance
+        self.instance.save()
 
         # call any post-commit hooks that have been stashed on Forms
         for form in self.forms:
