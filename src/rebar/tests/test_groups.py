@@ -548,7 +548,7 @@ class FormGroupSaveTests(TestCase):
 
         with patch.object(FakeModel, 'save', autospec=True) as save_mock:
 
-            save_mock.side_effect = lambda s, commit: setattr(s, 'id', 42)
+            save_mock.side_effect = lambda s: setattr(s, 'id', 42)
             form_data = {
                 'group-name-first_name': 'John',
                 'group-name-last_name': 'Doe',
@@ -561,7 +561,7 @@ class FormGroupSaveTests(TestCase):
 
             form_group.save()
 
-            save_mock.assert_called_once_with(ANY, commit=True)
+            save_mock.assert_called_once_with(ANY)
 
     def test_inline_formsets_saved_after_parent_saved(self):
 

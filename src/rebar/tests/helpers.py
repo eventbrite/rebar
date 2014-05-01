@@ -8,10 +8,8 @@ class FakeModel(object):
         self.id = None
         self.__dict__.update(kwargs)
 
-    def save(self, commit=False):
-
-        if commit:
-            self.id = 42
+    def save(self):
+        self.id = 42
 
 
 class CallSentinel(object):
