@@ -312,6 +312,25 @@ class FormGroupInitialTests(TestCase):
             'Joe',
         )
 
+    def test_pass_seperate_initial(self):
+        """
+        This test is related to bug in which the same initial was made
+        available to the __init__ for each subform. Elements of initial that
+        happened to have the same key were being overwritten.
+        """
+        class OtherNameForm(NameForm):
+            def __init__(self, *args, **kwargs):
+                kwargs['initial']['first_name'] = 'Steve'
+
+        fg_class = formgroup_factory(
+            (OtherNameForm,
+             NameForm),
+        )
+
+        formgroup = fg_class()
+
+        self.assertNotEqual(formgroup.name.initial.get('first_name'), 'Steve')
+
     def test_initial_not_passed_to_formgroups(self):
 
         fg_class = formgroup_factory(
