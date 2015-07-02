@@ -2,10 +2,9 @@
 Tests for FormGroups
 """
 
-from django.utils.unittest import TestCase
+from unittest import TestCase
 
 from django.core.exceptions import ValidationError
-from django.forms.util import ErrorList
 from django.forms.formsets import (
     BaseFormSet,
     formset_factory,
@@ -23,6 +22,7 @@ from rebar.tests.helpers import (
     NameForm,
 )
 
+from rebar.dix import ErrorList
 from rebar.group import (
     formgroup_factory,
     FormGroup,
