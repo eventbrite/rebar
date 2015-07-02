@@ -1,6 +1,14 @@
 News
 ====
 
+0.4
+---
+
+*Release date: UNRELEASED*
+
+* Copy the initial object before passing into subforms.
+
+
 0.3
 ---
 
