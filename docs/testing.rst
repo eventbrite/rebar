@@ -97,7 +97,7 @@ prefix set to the ``__prefix__`` sentinel.
 .. doctest::
 
    >>> formset.empty_form  # doctest: +ELLIPSIS
-   <NameForm object at ...>
+   <NameForm ...>
    >>> formset.empty_form.prefix
    u'form-__prefix__'
 

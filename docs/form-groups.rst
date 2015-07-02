@@ -65,7 +65,7 @@ form.
 .. doctest::
 
    >>> ContactFormGroup()  # doctest: +ELLIPSIS
-   <rebar.group.FormGroup object at ...>
+   <rebar.group.FormGroup ...>
 
 
 Using Form Groups
@@ -86,9 +86,9 @@ either by index or name.
 
    >>> form_group = ContactFormGroup()
    >>> form_group.contact
-   <ContactForm object at ...>
+   <ContactForm ...>
    >>> form_group.address
-   <AddressForm object at ...>
+   <AddressForm ...>
    >>> form_group[0] == form_group.contact
    True
 
