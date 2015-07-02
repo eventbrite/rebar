@@ -70,7 +70,7 @@ class FormGroup(object):
                     auto_id=self.auto_id,
                     error_class=self.error_class,
                     label_suffix=self.label_suffix,
-                    initial=self.initial,
+                    initial=self.initial.copy(),
                 ))
 
             elif issubclass(member_class, BaseInlineFormSet):
