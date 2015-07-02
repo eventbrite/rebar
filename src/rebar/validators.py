@@ -3,7 +3,7 @@ from copy import deepcopy
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.forms import forms, formsets
-from django.forms.util import ErrorList
+from rebar.dix import ErrorList
 
 
 class StateValidatorFormMixin(object):

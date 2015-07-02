@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.forms.forms import BaseForm
 from django.forms.formsets import BaseFormSet
 from django.forms.models import BaseInlineFormSet
-from django.forms.util import ErrorList
+from rebar.dix import ErrorList
 
 from rebar.validators import StateValidatorFormMixin
 
