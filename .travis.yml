@@ -8,7 +8,7 @@ env:
   - DJANGO_SPEC=Django~=1.6
   - DJANGO_SPEC=Django~=1.7
   - DJANGO_SPEC=Django~=1.8
-  - DJANGO_SPEC=https://github.com/django/django/zipball/master\#egg\Django
+  - DJANGO_SPEC=git+https://github.com/django/django.git
 
 install:
   - pip install coveralls --use-mirrors
