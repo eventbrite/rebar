@@ -32,3 +32,20 @@ forms and develop more complex abstractions. Rebar includes:
   FormGroup instances for use in unit tests.
 
 Rebar supports Django 1.5 and later on Python 2.6, 2.7, and 3.3.
+
+
+Running Tests
+=============
+
+You can run the tests with ``setup.py``::
+
+  $ python setup.py test
+
+Tox allows you to run the tests against the supported dependency matrix.
+
+::
+
+   $ pip install tox
+   $ tox
+
+Rebar prefers Tox 2.0 or later.
