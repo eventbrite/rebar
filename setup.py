@@ -10,7 +10,7 @@ version = '0.4'
 
 
 setup(name='rebar',
-      version=version + 'eventbrite',
+      version=version + '+eventbrite',
       description="",
       long_description=README + '\n\n' + NEWS,
       classifiers=[
