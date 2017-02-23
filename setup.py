@@ -6,11 +6,11 @@ README = open(os.path.join(here, 'README.rst')).read()
 NEWS = open(os.path.join(here, 'NEWS.txt')).read()
 
 
-version = '0.3'
+version = '0.4'
 
 
 setup(name='rebar',
-      version=version,
+      version=version + 'eventbrite',
       description="",
       long_description=README + '\n\n' + NEWS,
       classifiers=[
